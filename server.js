@@ -42,7 +42,7 @@ app.get('/executar', async (req, res) => {
         info: {
           linksPara: nomesSimples,
           linksReais: links,
-          conteudo: document.innerHTML
+          conteudo: document.documentElement.outerHTML
         }
       };
     });
