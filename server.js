@@ -6,7 +6,7 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const urlBase = 'https://xamacardoso.github.io/Buscardoso-ProgWeb/';
+const urlBase = 'https://xamacardoso.github.io/Buscardoso-ProgWeb/index.html';
 const caminhoArquivo = path.join(__dirname, 'pagina.json');
 
 // Rota principal que inicia o scraping
