@@ -1,10 +1,14 @@
 const express = require('express');
+const cors = require('cors'); 
 const puppeteer = require('puppeteer');
 const path = require('path');
 const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Habilita CORS para todas as origens
+app.use(cors()); 
 
 // Usar diretório temporário compatível com Railway
 const caminhoArquivo = path.join('/tmp', 'pagina.json');
