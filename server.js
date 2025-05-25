@@ -6,18 +6,18 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Usar diretório temporário compatível com Railway
+const caminhoArquivo = path.join('/tmp', 'pagina.json');
 const urlBase = 'https://xamacardoso.github.io/Buscardoso-ProgWeb/index.html';
-const caminhoArquivo = path.join(__dirname, 'pagina.json');
 
-// Rota principal que inicia o scraping
 app.get('/executar', async (req, res) => {
   fs.writeFileSync(caminhoArquivo, '[]', 'utf-8');
   const visitadas = new Set();
   const resultados = [];
 
   const browser = await puppeteer.launch({
-    headless: 'new', // necessário para funcionar em nuvens como Railway
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    headless: 'new',
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
   });
 
   async function visitarPagina(url) {
@@ -29,7 +29,6 @@ app.get('/executar', async (req, res) => {
 
     const dados = await page.evaluate(() => {
       const anchors = Array.from(document.querySelectorAll('a'));
-
       const links = anchors
         .map(a => a.getAttribute('href'))
         .filter(href => href && href.endsWith('.html'));
@@ -42,7 +41,7 @@ app.get('/executar', async (req, res) => {
         info: {
           linksPara: nomesSimples,
           linksReais: links,
-          conteudo: document.documentElement.outerHTML
+          conteudo: document.documentElement.innerHTML
         }
       };
     });
@@ -56,9 +55,7 @@ app.get('/executar', async (req, res) => {
       }
     });
 
-    const linksAbsolutos = dados.info.linksReais.map(href =>
-      new URL(href, url).href
-    );
+    const linksAbsolutos = dados.info.linksReais.map(href => new URL(href, url).href);
 
     for (const link of linksAbsolutos) {
       await visitarPagina(link);
@@ -75,10 +72,12 @@ app.get('/executar', async (req, res) => {
   res.json({ mensagem: 'Scraping finalizado com sucesso!', arquivo: '/pagina.json' });
 });
 
-// Servir o arquivo JSON publicamente
-app.use('/pagina.json', express.static(caminhoArquivo));
+// Servir o JSON da pasta temporária
+app.get('/pagina.json', (req, res) => {
+  res.sendFile(caminhoArquivo);
+});
 
-// Página inicial simples
+// Página inicial
 app.get('/', (req, res) => {
   res.send(`<h1>Scraper online</h1><p>Acesse <a href="/executar">/executar</a> para rodar o scraper.</p>`);
 });
