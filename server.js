@@ -10,7 +10,6 @@ const PORT = process.env.PORT || 3000;
 // Habilita CORS para todas as origens
 app.use(cors()); 
 
-// Usar diretório temporário compatível com Railway
 const caminhoArquivo = path.join('/tmp', 'pagina.json');
 const urlBase = 'https://xamacardoso.github.io/Buscardoso-ProgWeb/index.html';
 
